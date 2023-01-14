@@ -1,0 +1,27 @@
+const https = require('https');
+
+// VISA stock symbol
+const symbol = 'V';
+
+// function to get stock price in dollars
+const getStockPrice = () => {
+    https.get(`https://finance.yahoo.com/quote/${symbol}`, (resp) => {
+    let data = '';
+
+    // A chunk of data has been recieved.
+    resp.on('data', (chunk) => {
+        data += chunk;
+    });
+
+    // The whole response has been received.
+    resp.on('end', () => {
+        const stockPrice = data.match(/regularMarketPrice":([0-9.]+)/)[1];
+        console.log(`VISA stock price: $${stockPrice}`);
+    });
+    }).on("error", (err) => {
+        console.log("Error: " + err.message);
+    });
+}
+
+// call the function
+getStockPrice();
